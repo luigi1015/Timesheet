@@ -434,8 +434,9 @@ public class TimesheetGUI extends JFrame implements ActionListener {
 			public void actionPerformed(ActionEvent event)
 			{//Add the time earned
 				try
-				{//Set the fiscal starting month.
-					timeEarnedDataModel.addRow(new Object[]{getNumMonth((String)addTimeEarnedMonthSpinner.getValue()) + "/" + ((Integer)addTimeEarnedDaySpinner.getValue()).toString() + "/" + ((Integer)addTimeEarnedYearSpinner.getValue()).toString(), ((Integer)addTimeEarnedHoursSpinner.getValue()).toString(), (String)addTimeEarnedTimeTypeSpinner.getValue(), addTimeEarnedCommentTextField.getText()});
+				{
+					//timeEarnedDataModel.addRow(new Object[]{getNumMonth((String)addTimeEarnedMonthSpinner.getValue()) + "/" + ((Integer)addTimeEarnedDaySpinner.getValue()).toString() + "/" + ((Integer)addTimeEarnedYearSpinner.getValue()).toString(), ((Integer)addTimeEarnedHoursSpinner.getValue()).toString(), (String)addTimeEarnedTimeTypeSpinner.getValue(), addTimeEarnedCommentTextField.getText()});
+					addTimeEarned( (String)addTimeEarnedMonthSpinner.getValue(), (Integer)addTimeEarnedDaySpinner.getValue(), (Integer)addTimeEarnedYearSpinner.getValue(), (Integer)addTimeEarnedHoursSpinner.getValue(), (String)addTimeEarnedTimeTypeSpinner.getValue(), addTimeEarnedCommentTextField.getText());
 				}
 				catch( Exception e )
 				{
@@ -445,6 +446,12 @@ public class TimesheetGUI extends JFrame implements ActionListener {
 			}
 		});
 		timeEarnedPanel.add( addTimeEarnedButton );
+	}
+	
+	private void addTimeEarned( String month, Integer day, Integer year, Integer hours, String timeType, String comment ) throws Exception
+	{//Add time earned to the GUI and the Timesheet object.
+		timeEarnedDataModel.addRow(new Object[]{getNumMonth(month) + "/" + day.toString() + "/" + year.toString(), hours.toString(), timeType, comment});
+		ts.addTimeEarned(getNumMonth(month), day.intValue(), year.intValue(), hours.intValue(), timeType, comment);
 	}
 	
 	private void createTimeTakenPanel()
@@ -626,11 +633,21 @@ public class TimesheetGUI extends JFrame implements ActionListener {
 			thirdShiftRadioButton.setSelected( true );
 		}
 		
+		//Get the fiscal starting date.
+		fiscalStartMonthSpinner.setValue( months[ts.getFiscalStartingMonth()-1] );
+		fiscalStartDaySpinner.setValue( new Integer(ts.getFiscalStartingDay()) );
+		
 		//Get the different types of time given.
 		vacationInitialHoursSpinner.setValue( new Integer(ts.getTimeGiven( "Vacation" )) );
 		holidayInitialHoursSpinner.setValue( new Integer(ts.getTimeGiven( "Holiday" )) );
 		floatingholidayInitialHoursSpinner.setValue( new Integer(ts.getTimeGiven( "Floating Holiday" )) );
 		personalInitialHoursSpinner.setValue( new Integer(ts.getTimeGiven( "Personal" )) );
+		
+		//Put the time earned on the time earned data model.
+		for( Time t : ts.getTimeEarned() )
+		{//Go through each time earned time and add it to the data model.
+			timeEarnedDataModel.addRow(new Object[]{t.getDate(), t.getHours(), t.getType(), t.getComment()});
+		}
 	}
 	
 	private void openDB()
@@ -723,7 +740,7 @@ public class TimesheetGUI extends JFrame implements ActionListener {
 		}
 		catch( Exception e )
 		{
-			System.err.println( "In SaveDB while saving the month: " + e.getMessage() );
+			System.err.println( "In SaveDB while saving the fiscal starting month: " + e.getMessage() );
 		}
 		ts.setFiscalStartingDay( ((Integer)fiscalStartDaySpinner.getValue()).intValue() );//Save the starting fiscal day.
 		

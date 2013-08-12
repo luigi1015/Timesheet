@@ -47,7 +47,7 @@ public class TimesheetDB {
 		}
 		catch (Exception e)
 		{
-			System.err.println( "Error in IFSSDB constructor with filename loading the JDBC driver: " + e.getMessage() );
+			System.err.println( "Error in DB constructor in TimesheetDB class with filename loading the JDBC driver: " + e.getMessage() );
 			//e.printStackTrace();
 			throw( e );
 		}
@@ -68,12 +68,21 @@ public class TimesheetDB {
 			db = DriverManager.getConnection("jdbc:sqlite:" + dbFilename);
 			sqlSt = db.createStatement();
 			sqlSt.setQueryTimeout(30);//Set timeout to 30 seconds.
+			/*
 			sqlSt.executeUpdate( "CREATE TABLE IF NOT EXISTS Timesheet (Version TEXT PRIMARY KEY);" );
-			sqlSt.executeUpdate( "CREATE TABLE IF NOT EXISTS Person (ID INTEGER NOT NULL, Name TEXT NOT NULL, Shift INTEGER, FiscalStartingMonth INTEGER, FiscalStartingDay INTEGER, PRIMARY KEY(ID));" );
+			sqlSt.executeUpdate( "CREATE TABLE IF NOT EXISTS Person (ID TEXT NOT NULL, Name TEXT NOT NULL, Shift INTEGER, FiscalStartingMonth INTEGER, FiscalStartingDay INTEGER, PRIMARY KEY(ID));" );
 			sqlSt.executeUpdate( "CREATE TABLE IF NOT EXISTS TimeTypes (Type TEXT PRIMARY KEY);" );
 			sqlSt.executeUpdate( "CREATE TABLE IF NOT EXISTS TimeGiven (TimeType TEXT NOT NULL, numHours INTEGER, PRIMARY KEY(TimeType));" );
 			sqlSt.executeUpdate( "CREATE TABLE IF NOT EXISTS TimeTaken (TimeType TEXT NOT NULL, Date INTEGER NOT NULL, NumHours INTEGER NOT NULL, Comment TEXT, PRIMARY KEY(TimeType, Date));" );
 			sqlSt.executeUpdate( "CREATE TABLE IF NOT EXISTS TimeEarned (TimeType TEXT NOT NULL, Date INTEGER NOT NULL, NumHours INTEGER NOT NULL, Comment TEXT, PRIMARY KEY(TimeType, Date));" );
+			*/
+			
+			sqlSt.executeUpdate( "CREATE TABLE IF NOT EXISTS Timesheet (Version TEXT PRIMARY KEY, UNIQUE(Version) ON CONFLICT REPLACE);" );
+			sqlSt.executeUpdate( "CREATE TABLE IF NOT EXISTS Person (ID TEXT NOT NULL, Name TEXT NOT NULL, Shift INTEGER, FiscalStartingMonth INTEGER, FiscalStartingDay INTEGER, PRIMARY KEY(ID), UNIQUE(ID) ON CONFLICT REPLACE);" );
+			sqlSt.executeUpdate( "CREATE TABLE IF NOT EXISTS TimeTypes (Type TEXT PRIMARY KEY, UNIQUE(Type) ON CONFLICT REPLACE);" );
+			sqlSt.executeUpdate( "CREATE TABLE IF NOT EXISTS TimeGiven (TimeType TEXT NOT NULL, numHours INTEGER, PRIMARY KEY(TimeType), UNIQUE(TimeType) ON CONFLICT REPLACE);" );
+			sqlSt.executeUpdate( "CREATE TABLE IF NOT EXISTS TimeTaken (TimeType TEXT NOT NULL, Date INTEGER NOT NULL, NumHours INTEGER NOT NULL, Comment TEXT, PRIMARY KEY(TimeType, Date), UNIQUE(TimeType, Date) ON CONFLICT REPLACE);" );
+			sqlSt.executeUpdate( "CREATE TABLE IF NOT EXISTS TimeEarned (TimeType TEXT NOT NULL, Date INTEGER NOT NULL, NumHours INTEGER NOT NULL, Comment TEXT, PRIMARY KEY(TimeType, Date), UNIQUE(TimeType, Date) ON CONFLICT REPLACE);" );
 			
 			for( String timeType : Time.getTimeTypes() )
 			{//Add each of the time types to the database.
@@ -160,7 +169,7 @@ public class TimesheetDB {
 		}
 		catch( Exception e )
 		{
-			System.err.println( "Error getting shift in getTimeTypes: " + e.getMessage() );
+			System.err.println( "Error getting info in getTimeTypes in TimesheetDB class: " + e.getMessage() );
 		}
 		finally
 		{
@@ -173,7 +182,7 @@ public class TimesheetDB {
 			}
 			catch( Exception e )
 			{
-				System.err.println( "Error closing the database in getTimeTypes: " + e.getMessage() );
+				System.err.println( "Error closing the database in getTimeTypes in TimesheetDB class: " + e.getMessage() );
 			}
 		}
 		
@@ -185,6 +194,7 @@ public class TimesheetDB {
 		Connection db = null;
 		Statement sqlSt = null;
 		
+		
 		try
 		{
 			db = DriverManager.getConnection("jdbc:sqlite:" + dbFilename);
@@ -195,7 +205,7 @@ public class TimesheetDB {
 		}
 		catch( Exception e )
 		{
-			System.err.println( "Error setting personal info in setPersonalInfo: " + e.getMessage() );
+			System.err.println( "Error setting personal info in setPersonalInfo in TimesheetDB class: " + e.getMessage() );
 			//throw( e );
 		}
 		finally
@@ -209,7 +219,7 @@ public class TimesheetDB {
 			}
 			catch( Exception e )
 			{
-				System.err.println( "Error closing the database in setPersonalInfo: " + e.getMessage() );
+				System.err.println( "Error closing the database in setPersonalInfo in TimesheetDB class: " + e.getMessage() );
 				//throw( e );
 			}
 		}
@@ -235,7 +245,7 @@ public class TimesheetDB {
 		}
 		catch( Exception e )
 		{
-			System.err.println( "Error setting personal info in getID: " + e.getMessage() );
+			System.err.println( "Error setting personal info in getID in TimesheetDB class: " + e.getMessage() );
 		}
 		finally
 		{
@@ -248,7 +258,7 @@ public class TimesheetDB {
 			}
 			catch( Exception e )
 			{
-				System.err.println( "Error closing the database in getID: " + e.getMessage() );
+				System.err.println( "Error closing the database in getID in TimesheetDB class: " + e.getMessage() );
 			}
 		}
 		
@@ -275,7 +285,7 @@ public class TimesheetDB {
 		}
 		catch( Exception e )
 		{
-			System.err.println( "Error getting name in getEmployeeName: " + e.getMessage() );
+			System.err.println( "Error getting name in getEmployeeName in TimesheetDB class: " + e.getMessage() );
 		}
 		finally
 		{
@@ -288,7 +298,7 @@ public class TimesheetDB {
 			}
 			catch( Exception e )
 			{
-				System.err.println( "Error closing the database in getEmployeeName: " + e.getMessage() );
+				System.err.println( "Error closing the database in getEmployeeName in TimesheetDB class: " + e.getMessage() );
 			}
 		}
 		
@@ -315,7 +325,7 @@ public class TimesheetDB {
 		}
 		catch( Exception e )
 		{
-			System.err.println( "Error getting shift in getEmployeeShift: " + e.getMessage() );
+			System.err.println( "Error getting shift in getEmployeeShift in TimesheetDB class: " + e.getMessage() );
 		}
 		finally
 		{
@@ -328,7 +338,7 @@ public class TimesheetDB {
 			}
 			catch( Exception e )
 			{
-				System.err.println( "Error closing the database in getEmployeeShift: " + e.getMessage() );
+				System.err.println( "Error closing the database in getEmployeeShift in TimesheetDB class: " + e.getMessage() );
 			}
 		}
 		
@@ -355,7 +365,7 @@ public class TimesheetDB {
 		}
 		catch( Exception e )
 		{
-			System.err.println( "Error setting personal info in getFiscalStartingMonth: " + e.getMessage() );
+			System.err.println( "Error setting personal info in getFiscalStartingMonth in TimesheetDB class: " + e.getMessage() );
 		}
 		finally
 		{
@@ -368,7 +378,7 @@ public class TimesheetDB {
 			}
 			catch( Exception e )
 			{
-				System.err.println( "Error closing the database in getFiscalStartingMonth: " + e.getMessage() );
+				System.err.println( "Error closing the database in getFiscalStartingMonth in TimesheetDB class: " + e.getMessage() );
 			}
 		}
 		
@@ -395,7 +405,7 @@ public class TimesheetDB {
 		}
 		catch( Exception e )
 		{
-			System.err.println( "Error setting personal info in getFiscalStartingDay: " + e.getMessage() );
+			System.err.println( "Error setting personal info in getFiscalStartingDay in TimesheetDB class: " + e.getMessage() );
 		}
 		finally
 		{
@@ -408,7 +418,7 @@ public class TimesheetDB {
 			}
 			catch( Exception e )
 			{
-				System.err.println( "Error closing the database in getFiscalStartingDay: " + e.getMessage() );
+				System.err.println( "Error closing the database in getFiscalStartingDay in TimesheetDB class: " + e.getMessage() );
 			}
 		}
 		
@@ -425,11 +435,11 @@ public class TimesheetDB {
 			db = DriverManager.getConnection("jdbc:sqlite:" + dbFilename);
 			sqlSt = db.createStatement();
 			sqlSt.setQueryTimeout(30);//Set timeout to 30 seconds.
-			sqlSt.executeUpdate( "INSERT OR IGNORE INTO TimeEarned VALUES( '" + newTime.getType() + "'," + newTime.getDateInt() + "," + newTime.getHours() + ",'" + newTime.getComment() + "');" );
+			sqlSt.executeUpdate( "INSERT OR IGNORE INTO TimeEarned (TimeType, Date, NumHours, Comment) VALUES( '" + newTime.getType() + "'," + newTime.getDateInt() + "," + newTime.getHours() + ",'" + newTime.getComment() + "');" );
 		}
 		catch( Exception e )
 		{
-			System.err.println( "Error inserting time in addTimeEarned: " + e.getMessage() );
+			System.err.println( "Error inserting time in addTimeEarned in TimesheetDB class: " + e.getMessage() );
 		}
 		finally
 		{
@@ -442,7 +452,7 @@ public class TimesheetDB {
 			}
 			catch( Exception e )
 			{
-				System.err.println( "Error closing the database in addTimeEarned: " + e.getMessage() );
+				System.err.println( "Error closing the database in addTimeEarned in TimesheetDB class: " + e.getMessage() );
 			}
 		}
 	}
@@ -455,19 +465,23 @@ public class TimesheetDB {
 		List<Time> times = new ArrayList<Time>();
 		
 		try
-		{
+		{//Get the data from the database.
 			db = DriverManager.getConnection("jdbc:sqlite:" + dbFilename);
 			sqlSt = db.createStatement();
 			sqlSt.setQueryTimeout(30);//Set timeout to 30 seconds.
 			results = sqlSt.executeQuery( "SELECT TimeType, Date, NumHours, Comment FROM TimeEarned;" );
 			while( results.next() )
 			{//Get the employee number.
-				times.add( new Time(Integer.parseInt(results.getString("Date")), Integer.parseInt(results.getString("NumHours")), results.getString("TimeType"), results.getString("Comment"), false) );
+				//System.out.println( "Got time for \"" + results.getInt("Date") + "\" \"" + results.getInt("NumHours") + "\" \"" + results.getString("TimeType") + "\" \"" + results.getString("Comment") + "\" \"" + false + "\"");
+				//System.out.println( "Got time for \"" + Integer.parseInt(results.getString("Date")) + "\" \"" + Integer.parseInt(results.getString("NumHours")) + "\" \"" + results.getString("TimeType") + "\" \"" + results.getString("Comment") + "\" \"" + false + "\"");
+				//Time test1 = new Time(results.getInt("Date"), results.getInt("NumHours"), results.getString("TimeType"), results.getString("Comment"), false);
+				//times.add( new Time(Integer.parseInt(results.getString("Date")), Integer.parseInt(results.getString("NumHours")), results.getString("TimeType"), results.getString("Comment"), false) );
+				times.add( new Time(results.getInt("Date"), results.getInt("NumHours"), results.getString("TimeType"), results.getString("Comment"), false) );
 			}
 		}
 		catch( Exception e )
 		{
-			System.err.println( "Error getting shift in getTimeEarned: " + e.getMessage() );
+			System.err.println( "Error getting info in getTimeEarned in TimesheetDB class: " + e.getMessage() );
 		}
 		finally
 		{
@@ -480,7 +494,7 @@ public class TimesheetDB {
 			}
 			catch( Exception e )
 			{
-				System.err.println( "Error closing the database in getTimeEarned: " + e.getMessage() );
+				System.err.println( "Error closing the database in getTimeEarned in TimesheetDB class: " + e.getMessage() );
 			}
 		}
 		
@@ -497,11 +511,11 @@ public class TimesheetDB {
 			db = DriverManager.getConnection("jdbc:sqlite:" + dbFilename);
 			sqlSt = db.createStatement();
 			sqlSt.setQueryTimeout(30);//Set timeout to 30 seconds.
-			sqlSt.executeUpdate( "INSERT OR IGNORE INTO TimeEarned VALUES( '" + newTime.getType() + "'," + newTime.getDateInt() + "," + newTime.getHours() + ",'" + newTime.getComment() + "');" );
+			sqlSt.executeUpdate( "INSERT OR IGNORE INTO TimeTaken (TimeType, Date, NumHours, Comment) VALUES( '" + newTime.getType() + "'," + newTime.getDateInt() + "," + newTime.getHours() + ",'" + newTime.getComment() + "');" );
 		}
 		catch( Exception e )
 		{
-			System.err.println( "Error inserting time in addTimeTaken: " + e.getMessage() );
+			System.err.println( "Error inserting time in addTimeTaken in TimesheetDB class: " + e.getMessage() );
 		}
 		finally
 		{
@@ -514,7 +528,7 @@ public class TimesheetDB {
 			}
 			catch( Exception e )
 			{
-				System.err.println( "Error closing the database in addTimeTaken: " + e.getMessage() );
+				System.err.println( "Error closing the database in addTimeTaken in TimesheetDB class: " + e.getMessage() );
 			}
 		}
 	}
@@ -531,7 +545,7 @@ public class TimesheetDB {
 			db = DriverManager.getConnection("jdbc:sqlite:" + dbFilename);
 			sqlSt = db.createStatement();
 			sqlSt.setQueryTimeout(30);//Set timeout to 30 seconds.
-			results = sqlSt.executeQuery( "SELECT TimeType, Date, NumHours, Comment FROM TimeEarned;" );
+			results = sqlSt.executeQuery( "SELECT TimeType, Date, NumHours, Comment FROM TimeTaken;" );
 			while( results.next() )
 			{//Get the employee number.
 				times.add( new Time(Integer.parseInt(results.getString("Date")), Integer.parseInt(results.getString("NumHours")), results.getString("TimeType"), results.getString("Comment"), true) );
@@ -539,7 +553,7 @@ public class TimesheetDB {
 		}
 		catch( Exception e )
 		{
-			System.err.println( "Error getting shift in getTimeTaken: " + e.getMessage() );
+			System.err.println( "Error getting info in getTimeTaken in TimesheetDB class: " + e.getMessage() );
 		}
 		finally
 		{
@@ -552,7 +566,7 @@ public class TimesheetDB {
 			}
 			catch( Exception e )
 			{
-				System.err.println( "Error closing the database in getTimeTaken: " + e.getMessage() );
+				System.err.println( "Error closing the database in getTimeTaken in TimesheetDB class: " + e.getMessage() );
 			}
 		}
 		
@@ -578,7 +592,7 @@ public class TimesheetDB {
 		}
 		catch( Exception e )
 		{
-			System.err.println( "Error inserting time in saveTimeGiven: " + e.getMessage() );
+			System.err.println( "Error inserting time in saveTimeGiven in TimesheetDB class: " + e.getMessage() );
 		}
 		finally
 		{
@@ -591,7 +605,7 @@ public class TimesheetDB {
 			}
 			catch( Exception e )
 			{
-				System.err.println( "Error closing the database in saveTimeGiven: " + e.getMessage() );
+				System.err.println( "Error closing the database in saveTimeGiven in TimesheetDB class: " + e.getMessage() );
 			}
 		}
 	}
@@ -616,7 +630,7 @@ public class TimesheetDB {
 		}
 		catch( Exception e )
 		{
-			System.err.println( "Error getting shift in getTimeGiven: " + e.getMessage() );
+			System.err.println( "Error getting info in getTimeGiven in TimesheetDB class: " + e.getMessage() );
 		}
 		finally
 		{
@@ -629,7 +643,7 @@ public class TimesheetDB {
 			}
 			catch( Exception e )
 			{
-				System.err.println( "Error closing the database in getTimeGiven: " + e.getMessage() );
+				System.err.println( "Error closing the database in getTimeGiven in TimesheetDB class: " + e.getMessage() );
 			}
 		}
 		

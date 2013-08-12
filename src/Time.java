@@ -38,11 +38,14 @@ public class Time {
 	
 	public Time( int newDate, int hours, String type, String cmt, boolean isTaken)
 	{
+		//System.out.println( "Time: \"" + newDate + "\" \"" + hours + "\" \"" + type + "\" \"" + cmt + "\" \"" + isTaken + "\"" );
+		date = new GregorianCalendar();
 		setDate( newDate );
 		numHours = hours;
 		timeType = type;
 		comment = cmt;
 		isTimeTaken = isTaken;
+		//System.out.println( "Time: \"" + getDate() + "\" \"" + numHours + "\" \"" + timeType + "\" \"" + comment + "\" \"" + isTimeTaken + "\"" );
 	}
 	
 	public String getDate( String format )
@@ -78,12 +81,15 @@ public class Time {
 	
 	public void setDate( int month, int day, int year )
 	{//Sets the date to the parameter values.
+		//date.set(year, month-1, day);
 		date.set(year, month, day);
 	}
 	
 	public void setDate( int newDate )
 	{//Sets the date from an int in the format YYYYMMDD.
-		date.set(newDate/10000, ((newDate/100)%100-1), newDate%100);
+		//System.out.println( "Date: \"" + newDate + "\" \"" + newDate/10000 + "\" \"" + ((newDate/100)%100-1) + "\" \"" + newDate%100 + "\"" );
+		//date.set(newDate/10000, ((newDate/100)%100-1), newDate%100);
+		date.set(newDate/10000, ((newDate/100)%100), newDate%100);
 	}
 	
 	public void setHours( int hours )

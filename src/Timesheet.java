@@ -95,7 +95,7 @@ public class Timesheet {
 			}
 			for( Time tTaken: timeTaken )
 			{//Add each of the times in timeTaken
-				tDB.addTimeEarned(tTaken);
+				tDB.addTimeTaken(tTaken);
 			}
 		}
 		catch( Exception e )
