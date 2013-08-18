@@ -1,3 +1,4 @@
+//import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 //import java.util.GregorianCalendar;
@@ -24,6 +25,11 @@ public class Timesheet {
 		timeTaken.clear();
 		timeGiven.clear();
 		*/
+		fiscalStartingMonth = 1;
+		fiscalStartingDay = 1;
+		name = "";
+		ID = "";
+		shift = 1;
 		timeGiven = new HashMap<String, Integer>();
 		tDB = new TimesheetDB();
 		openDB( "timesheet.db" );
@@ -31,6 +37,8 @@ public class Timesheet {
 	
 	public Timesheet( String newName, String newID, int newshift )
 	{//Default constructor.
+		fiscalStartingMonth = 1;
+		fiscalStartingDay = 1;
 		name = newName;
 		ID = newID;
 		shift = newshift;
@@ -203,6 +211,19 @@ public class Timesheet {
 		return sum;
 	}
 	
+	public int sumTimeEarned( String timeType, int endMonth, int endDay, int endYear )
+	{//Returns the time earned object at index index up to the date indicated by endMonth/endDay/endYear
+		int sum = 0;
+		for( Time t : timeEarned )
+		{//Iterate over every time in timeEarned and sum up the ones that match timeType.
+			if( t.getType().equals(timeType) && t.isOnOrBefore(endMonth, endDay, endYear) )
+			{//It matches, so add to the sum.
+				sum += t.getHours();
+			}
+		}
+		return sum;
+	}
+	
 	public void addTimeGiven( String newName, int newValue )
 	{//Add a time given entry.
 		timeGiven.put(newName, newValue);
@@ -256,8 +277,23 @@ public class Timesheet {
 		return sum;
 	}
 	
+	public int sumTimeTaken( String timeType, int endMonth, int endDay, int endYear )
+	{//Returns the time earned object at index index
+		int sum = 0;
+		for( Time t : timeTaken )
+		{//Iterate over every time in timeEarned and sum up the ones that match timeType.
+			if( t.getType().equals(timeType) && t.isOnOrBefore(endMonth, endDay, endYear) )
+			{//It matches, so add to the sum.
+				sum += t.getHours();
+			}
+		}
+		return sum;
+	}
+	
 	public String getTimesheet( int startMonth, int startDay, int startYear, int endMonth, int endDay, int endYear )
 	{//Returns a String with the timesheet for the given start and end date with the current data.
+		//GregorianCalendar startDate = new GregorianCalendar(startYear, startMonth, startDay);
+		//GregorianCalendar endDate = new GregorianCalendar(endYear, endMonth, endDay);
 		String timesheet = "";
 		//Start and ID info
 		timesheet += "==============================START OF REPORT=================================================================================================================\n";
@@ -269,17 +305,23 @@ public class Timesheet {
 		timesheet += "Type\tHours\tDates Earned\tComments\n";
 		for( Time t: timeEarned )
 		{//Go through each of the time earned entries and append the text to timesheet.
-			timesheet += t.getType() + "\t" + t.getHours() + "\t" + t.getDate() + "\t" + t.getComment() + "\n";
+			if( t.isOnOrAfter(startMonth, startDay, startYear) && t.isOnOrBefore(endMonth, endDay, endYear) )
+			{//If t is between the start and end dates, inclusive, add to the timesheet.
+				timesheet += t.getType() + "\t" + t.getHours() + "\t" + t.getDate() + "\t" + t.getComment() + "\n";
+			}
 		}
 		timesheet += "==========================================================================\n\n\n";
 		
 		//Time Taken
 		timesheet += "TIME TAKEN THIS PAY PERIOD\n";
 		timesheet += "==========================================================================\n";
-		timesheet += "Type\tHours\tDates Earned\tComments\n";
+		timesheet += "Type\tHours\tDates Taken\tComments\n";
 		for( Time t: timeTaken )
 		{//Go through each of the time earned entries and append the text to timesheet.
-			timesheet += t.getType() + "\t" + t.getHours() + "\t" + t.getDate() + "\t" + t.getComment() + "\n";
+			if( t.isOnOrAfter(startMonth, startDay, startYear) && t.isOnOrBefore(endMonth, endDay, endYear) )
+			{//If t is between the start and end dates, inclusive, add to the timesheet.
+				timesheet += t.getType() + "\t" + t.getHours() + "\t" + t.getDate() + "\t" + t.getComment() + "\n";
+			}
 		}
 		timesheet += "==========================================================================\n\n\n";
 		
@@ -290,7 +332,7 @@ public class Timesheet {
 		
 		for( String timeType : tDB.getTimeTypes() )
 		{//Go through each of the time types and calculate how many hours are left.
-			timesheet += timeType + ": " + ( getTimeGiven(timeType) + sumTimeEarned(timeType) - sumTimeTaken(timeType) ) + "\n";
+			timesheet += timeType + ": " + ( getTimeGiven(timeType) + sumTimeEarned(timeType, endMonth, endDay, endYear) - sumTimeTaken(timeType, endMonth, endDay, endYear) ) + "\n";
 		}
 		
 		timesheet += "==============================END OF REPORT=================================================================================================================\n";

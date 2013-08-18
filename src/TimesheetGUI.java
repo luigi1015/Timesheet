@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JPanel;
 import javax.swing.JMenu;
@@ -16,6 +17,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.ButtonGroup;
 import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SpinnerListModel;
 import javax.swing.JTable;
@@ -24,8 +26,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.JScrollPane;
 //import javax.swing.border.Border;
 //import javax.swing.border.LineBorder;
-import javax.swing.BorderFactory;
-import java.awt.Color;
+//import javax.swing.BorderFactory;
+//import java.awt.Color;
 //import javax.swing.JPanel;
 import java.awt.event.KeyEvent;
 
@@ -121,7 +123,9 @@ public class TimesheetGUI extends JFrame implements ActionListener {
 	private JButton addTimeTakenButton;//To execute the add for time taken.
 	
 	//Timesheet Panel
-	private JLabel timesheetLabel;//Holds the text of the timesheet.
+	//private JLabel timesheetLabel;//Holds the text of the timesheet.
+	private JTextArea timesheetTextArea;//Holds the text of the timesheet.
+	private JScrollPane timesheetScrollPane;//Holds the timesheet text area and provides scroll panes.
 	private JLabel timesheetStartLabel;//Timesheet Start Date label
 	private JLabel timesheetStartMonthLabel;//Timesheet Start Month label
 	private JLabel timesheetStartDayLabel;//Timesheet Start Day label
@@ -481,7 +485,7 @@ public class TimesheetGUI extends JFrame implements ActionListener {
 		addTimeTakenYearLabel = new JLabel( "Year" );
 		addTimeTakenYearLabel.setBounds(180, 450, 50, 25);
 		timeTakenPanel.add(addTimeTakenYearLabel);
-		addTimeTakenHoursLabel = new JLabel( "<html>Hours<br>Earned</html>" );
+		addTimeTakenHoursLabel = new JLabel( "<html>Hours<br>Taken</html>" );
 		addTimeTakenHoursLabel.setBounds(250, 425, 60, 50);
 		timeTakenPanel.add( addTimeTakenHoursLabel );
 		addTimeTakenCommentLabel = new JLabel( "Comment" );
@@ -517,7 +521,8 @@ public class TimesheetGUI extends JFrame implements ActionListener {
 			{//Add the time earned
 				try
 				{//Set the fiscal starting month.
-					timeTakenDataModel.addRow(new Object[]{ getNumMonth((String)addTimeTakenMonthSpinner.getValue()) + "/" + ((Integer)addTimeTakenDaySpinner.getValue()).toString() + "/" + ((Integer)addTimeTakenYearSpinner.getValue()).toString(), ((Integer)addTimeTakenHoursSpinner.getValue()).toString(), (String)addTimeTakenTimeTypeSpinner.getValue(), addTimeTakenCommentTextField.getText()});
+					//timeTakenDataModel.addRow(new Object[]{ getNumMonth((String)addTimeTakenMonthSpinner.getValue()) + "/" + ((Integer)addTimeTakenDaySpinner.getValue()).toString() + "/" + ((Integer)addTimeTakenYearSpinner.getValue()).toString(), ((Integer)addTimeTakenHoursSpinner.getValue()).toString(), (String)addTimeTakenTimeTypeSpinner.getValue(), addTimeTakenCommentTextField.getText()});
+					addTimeTaken( (String)addTimeTakenMonthSpinner.getValue(), (Integer)addTimeTakenDaySpinner.getValue(), (Integer)addTimeTakenYearSpinner.getValue(), (Integer)addTimeTakenHoursSpinner.getValue(), (String)addTimeTakenTimeTypeSpinner.getValue(), addTimeTakenCommentTextField.getText());
 				}
 				catch( Exception e )
 				{
@@ -529,16 +534,33 @@ public class TimesheetGUI extends JFrame implements ActionListener {
 		timeTakenPanel.add( addTimeTakenButton );
 	}
 	
+	private void addTimeTaken( String month, Integer day, Integer year, Integer hours, String timeType, String comment ) throws Exception
+	{//Add time earned to the GUI and the Timesheet object.
+		timeTakenDataModel.addRow(new Object[]{getNumMonth(month) + "/" + day.toString() + "/" + year.toString(), hours.toString(), timeType, comment});
+		ts.addTimeTaken(getNumMonth(month), day.intValue(), year.intValue(), hours.intValue(), timeType, comment);
+	}
+	
 	private void createTimesheetPanel()
 	{//Initialize the Timesheet tab.
 		timesheetPanel = new JPanel();
 		timesheetPanel.setLayout(null);
 		
+		/*
 		//Initialize the timesheet label.
 		timesheetLabel = new JLabel();
 		timesheetLabel.setBounds(0, 0, 450, 400);
 		timesheetLabel.setBorder(BorderFactory.createLineBorder(Color.black));//Create a black border around the label.
 		timesheetPanel.add(timesheetLabel);
+		*/
+		
+		//Initialize the timesheet text area.
+		timesheetTextArea = new JTextArea();
+		timesheetTextArea.setEditable( false );//Make sure the user can't edit the timesheet in the program for data integrity.
+		timesheetScrollPane = new JScrollPane( timesheetTextArea );
+		timesheetScrollPane.setBounds( 0, 0, 450, 400 );
+		timesheetScrollPane.setVerticalScrollBarPolicy( ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS );
+		timesheetScrollPane.setHorizontalScrollBarPolicy( ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED );
+		timesheetPanel.add( timesheetScrollPane );
 		
 		//Initialize the Start Time elements.
 		timesheetStartLabel = new JLabel( "Start Date:" );
@@ -560,7 +582,7 @@ public class TimesheetGUI extends JFrame implements ActionListener {
 		timesheetStartDaySpinner.setBounds(130, 475, 40, 25);
 		timesheetPanel.add(timesheetStartDaySpinner);
 		timesheetStartYearSpinner = new JSpinner( new SpinnerNumberModel(2013,2010,2050,1) );
-		timesheetStartYearSpinner.setEditor( new JSpinner.NumberEditor(addTimeEarnedYearSpinner, "####")  );
+		timesheetStartYearSpinner.setEditor( new JSpinner.NumberEditor(timesheetStartYearSpinner, "####")  );
 		timesheetStartYearSpinner.setBounds(180, 475, 60, 25);
 		timesheetPanel.add(timesheetStartYearSpinner);
 		
@@ -584,15 +606,36 @@ public class TimesheetGUI extends JFrame implements ActionListener {
 		timesheetEndDaySpinner.setBounds(370, 475, 40, 25);
 		timesheetPanel.add(timesheetEndDaySpinner);
 		timesheetEndYearSpinner = new JSpinner( new SpinnerNumberModel(2013,2010,2050,1) );
-		timesheetEndYearSpinner.setEditor( new JSpinner.NumberEditor(addTimeEarnedYearSpinner, "####")  );
+		timesheetEndYearSpinner.setEditor( new JSpinner.NumberEditor(timesheetEndYearSpinner, "####")  );
 		timesheetEndYearSpinner.setBounds(420, 475, 60, 25);
 		timesheetPanel.add(timesheetEndYearSpinner);
 		
 		//Initialize the create timesheet button
 		createTimesheetButton = new JButton("Create Timesheet");//Create the button to add time taken.
 		createTimesheetButton.setBounds( 20, 525, 160, 25 );
-		createTimesheetButton.addActionListener(this);
+		//createTimesheetButton.addActionListener(this);
+		createTimesheetButton.addActionListener(new ActionListener() 
+		{//Define the ActionListener function.
+			public void actionPerformed(ActionEvent event)
+			{//Add the time earned
+				try
+				{//Set the fiscal starting month.
+					//timeTakenDataModel.addRow(new Object[]{ getNumMonth((String)addTimeTakenMonthSpinner.getValue()) + "/" + ((Integer)addTimeTakenDaySpinner.getValue()).toString() + "/" + ((Integer)addTimeTakenYearSpinner.getValue()).toString(), ((Integer)addTimeTakenHoursSpinner.getValue()).toString(), (String)addTimeTakenTimeTypeSpinner.getValue(), addTimeTakenCommentTextField.getText()});
+					getTimesheet( getNumMonth((String)timesheetStartMonthSpinner.getValue()), ((Integer)timesheetStartDaySpinner.getValue()).intValue(), ((Integer)timesheetStartYearSpinner.getValue()).intValue(), getNumMonth((String)timesheetEndMonthSpinner.getValue()), ((Integer)timesheetEndDaySpinner.getValue()).intValue(), ((Integer)timesheetEndYearSpinner.getValue()).intValue());
+				}
+				catch( Exception e )
+				{
+					System.err.println( "While getting the timesheet in TimesheetGUI: " + e.getMessage() );
+				}
+				//timeTakenDataModel.addRow(new Object[]{((String)addTimeTakenMonthSpinner.getValue()) + " " + ((Integer)addTimeTakenDaySpinner.getValue()).toString() + ", " + ((Integer)addTimeTakenYearSpinner.getValue()).toString(), ((Integer)addTimeTakenHoursSpinner.getValue()).toString(), (String)addTimeTakenTimeTypeSpinner.getValue(), addTimeTakenCommentTextField.getText()});
+			}
+		});
 		timesheetPanel.add( createTimesheetButton );
+	}
+	
+	public void getTimesheet( int startMonth, int startDay, int startYear, int endMonth, int endDay, int endYear )
+	{//Put the timesheet on the timesheet label.
+		timesheetTextArea.setText( ts.getTimesheet(startMonth, startDay, startYear, endMonth, endDay, endYear) );
 	}
 	
 	public void actionPerformed( ActionEvent e )
@@ -647,6 +690,12 @@ public class TimesheetGUI extends JFrame implements ActionListener {
 		for( Time t : ts.getTimeEarned() )
 		{//Go through each time earned time and add it to the data model.
 			timeEarnedDataModel.addRow(new Object[]{t.getDate(), t.getHours(), t.getType(), t.getComment()});
+		}
+		
+		//Put the time earned on the time earned data model.
+		for( Time t : ts.getTimeTaken() )
+		{//Go through each time earned time and add it to the data model.
+			timeTakenDataModel.addRow(new Object[]{t.getDate(), t.getHours(), t.getType(), t.getComment()});
 		}
 	}
 	

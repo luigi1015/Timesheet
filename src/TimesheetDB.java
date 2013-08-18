@@ -350,7 +350,7 @@ public class TimesheetDB {
 		Connection db = null;
 		Statement sqlSt = null;
 		ResultSet results;
-		int fiscalStartingMonth = 0;
+		int fiscalStartingMonth = 1;
 		
 		try
 		{
@@ -390,7 +390,7 @@ public class TimesheetDB {
 		Connection db = null;
 		Statement sqlSt = null;
 		ResultSet results;
-		int fiscalStartingDay = 0;
+		int fiscalStartingDay = 1;
 		
 		try
 		{

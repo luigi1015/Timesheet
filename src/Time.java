@@ -82,14 +82,14 @@ public class Time {
 	public void setDate( int month, int day, int year )
 	{//Sets the date to the parameter values.
 		//date.set(year, month-1, day);
-		date.set(year, month, day);
+		date.set(year, month, day-1);
 	}
 	
 	public void setDate( int newDate )
 	{//Sets the date from an int in the format YYYYMMDD.
 		//System.out.println( "Date: \"" + newDate + "\" \"" + newDate/10000 + "\" \"" + ((newDate/100)%100-1) + "\" \"" + newDate%100 + "\"" );
 		//date.set(newDate/10000, ((newDate/100)%100-1), newDate%100);
-		date.set(newDate/10000, ((newDate/100)%100), newDate%100);
+		date.set(newDate/10000, ((newDate/100)%100)-1, newDate%100);
 	}
 	
 	public void setHours( int hours )
@@ -140,6 +140,36 @@ public class Time {
 	public boolean isTimeEarned()
 	{//Returns the number of hours.
 		return !isTimeTaken;
+	}
+	
+	public boolean isBefore( int month, int day, int year )
+	{//Returns true if this time is before the specified date.
+		GregorianCalendar newDate = new GregorianCalendar(year, month, day);
+		return ( date.compareTo( newDate ) < 0 );
+	}
+	
+	public boolean isAfter( int month, int day, int year )
+	{//Returns true if this time is after the specified date.
+		GregorianCalendar newDate = new GregorianCalendar(year, month, day);
+		return ( date.compareTo( newDate ) > 0 );
+	}
+	
+	public boolean isOnOrBefore( int month, int day, int year )
+	{//Returns true if this time is before the specified date.
+		GregorianCalendar newDate = new GregorianCalendar(year, month, day);
+		return ( date.compareTo( newDate ) <= 0 );
+	}
+	
+	public boolean isOnOrAfter( int month, int day, int year )
+	{//Returns true if this time is after the specified date.
+		GregorianCalendar newDate = new GregorianCalendar(year, month, day);
+		return ( date.compareTo( newDate ) >= 0 );
+	}
+	
+	public boolean isSameDate( int month, int day, int year )
+	{//Returns true if this time is on the specified date.
+		GregorianCalendar newDate = new GregorianCalendar(year, month, day);
+		return ( date.compareTo( newDate ) == 0 );
 	}
 	
 	public static String[] getTimeTypes()
