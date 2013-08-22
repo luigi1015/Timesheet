@@ -1,4 +1,6 @@
 import java.util.Arrays;
+import java.util.Calendar;
+//import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.text.SimpleDateFormat;
@@ -170,6 +172,31 @@ public class Time {
 	{//Returns true if this time is on the specified date.
 		GregorianCalendar newDate = new GregorianCalendar(year, month, day);
 		return ( date.compareTo( newDate ) == 0 );
+	}
+	
+	public boolean isBefore( Calendar c )
+	{//Returns true if this time is before the specified date.
+		return ( date.compareTo( c ) < 0 );
+	}
+	
+	public boolean isAfter( Calendar c )
+	{//Returns true if this time is after the specified date.
+		return ( date.compareTo( c ) > 0 );
+	}
+	
+	public boolean isOnOrBefore( Calendar c )
+	{//Returns true if this time is before the specified date.
+		return ( date.compareTo( c ) <= 0 );
+	}
+	
+	public boolean isOnOrAfter( Calendar c )
+	{//Returns true if this time is after the specified date.
+		return ( date.compareTo( c ) >= 0 );
+	}
+	
+	public boolean isSameDate( Calendar c )
+	{//Returns true if this time is on the specified date.
+		return ( date.compareTo( c ) == 0 );
 	}
 	
 	public static String[] getTimeTypes()

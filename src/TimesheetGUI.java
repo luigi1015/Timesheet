@@ -18,6 +18,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
 import javax.swing.ScrollPaneConstants;
+//import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SpinnerListModel;
 import javax.swing.JTable;
@@ -30,6 +31,8 @@ import javax.swing.JScrollPane;
 //import java.awt.Color;
 //import javax.swing.JPanel;
 import java.awt.event.KeyEvent;
+//import java.util.Calendar;
+//import java.util.Date;
 
 /**
  * Timesheet GUI
@@ -83,6 +86,9 @@ public class TimesheetGUI extends JFrame implements ActionListener {
 	private JLabel fiscalStartLabel;//Start of the fiscal year label
 	private JSpinner fiscalStartMonthSpinner;//Starting month of the fiscal year spinner
 	private JSpinner fiscalStartDaySpinner;//Starting day of the fiscal year spinner
+	private JSpinner fiscalStartYearSpinner;//Starting year of the fiscal year spinner
+	//private JSpinner fiscalStartDateSpinner;//Starting date of the fiscal year.
+	//private SpinnerDateModel fiscalStartDateModel;//Starting date model.
 	
 	//Time Earned Panel
 	private JScrollPane timeEarnedScrollPane;//Scroll pane for the time earned table.
@@ -92,6 +98,8 @@ public class TimesheetGUI extends JFrame implements ActionListener {
 	private JLabel addTimeEarnedMonthLabel;//Add time earned month label
 	private JLabel addTimeEarnedDayLabel;//Add time earned day label
 	private JLabel addTimeEarnedYearLabel;//Add time earned year label
+	//private JSpinner addTimeEarnedDateSpinner;//Add time earned date spinner
+	//private SpinnerDateModel addTimeEarnedDateModel;//Add time earned date Model
 	private JLabel addTimeEarnedHoursLabel;//Add time earned hours label
 	private JLabel addTimeEarnedCommentLabel;//Add time earned comment label
 	private JLabel addTimeEarnedTimeTypeLabel;//Add time earned Time Type label
@@ -111,6 +119,8 @@ public class TimesheetGUI extends JFrame implements ActionListener {
 	private JLabel addTimeTakenMonthLabel;//Add time taken month label
 	private JLabel addTimeTakenDayLabel;//Add time taken day label
 	private JLabel addTimeTakenYearLabel;//Add time taken year label
+	//private JSpinner addTimeTakenDateSpinner;//Add time taken date spinner
+	//private SpinnerDateModel addTimeTakenDateModel;//Add time taken date Model
 	private JLabel addTimeTakenHoursLabel;//Add time taken hours label
 	private JLabel addTimeTakenCommentLabel;//Add time taken comment label
 	private JLabel addTimeTakenTimeTypeLabel;//Add time taken Time Type label
@@ -133,7 +143,11 @@ public class TimesheetGUI extends JFrame implements ActionListener {
 	private JSpinner timesheetStartMonthSpinner;//Timesheet Start Month spinner
 	private JSpinner timesheetStartDaySpinner;//Timesheet Start Day spinner
 	private JSpinner timesheetStartYearSpinner;//Timesheet Start Year spinner
+	//private JSpinner timesheetStartDateSpinner;//Timesheet Start Date spinner
+	//private SpinnerDateModel timesheetStartDateModel;//Timesheet Start Date Model
 	private JLabel timesheetEndLabel;//Timesheet End Date label
+	//private JSpinner timesheetEndDateSpinner;//Timesheet Start Date spinner
+	//private SpinnerDateModel timesheetEndDateModel;//Timesheet Start Date Model
 	private JLabel timesheetEndMonthLabel;//Timesheet End Month label
 	private JLabel timesheetEndDayLabel;//Timesheet End Day label
 	private JLabel timesheetEndYearLabel;//Timesheet End Year label
@@ -368,9 +382,28 @@ public class TimesheetGUI extends JFrame implements ActionListener {
 		fiscalStartMonthSpinner = new JSpinner( new SpinnerListModel(months) );//Create a spinner using the text from months as items.
 		fiscalStartMonthSpinner.setBounds(220, 200, 90, 25);
 		personalPanel.add(fiscalStartMonthSpinner);
-		fiscalStartDaySpinner = new JSpinner( new SpinnerNumberModel(1,1,31,1) );//Create a spinner using the text from months as items.
+		fiscalStartDaySpinner = new JSpinner( new SpinnerNumberModel(1,1,31,1) );
 		fiscalStartDaySpinner.setBounds(320, 200, 40, 25);
 		personalPanel.add(fiscalStartDaySpinner);
+		fiscalStartYearSpinner = new JSpinner( new SpinnerNumberModel(2013,2010,2050,1) );
+		fiscalStartYearSpinner.setEditor( new JSpinner.NumberEditor(fiscalStartYearSpinner, "####")  );
+		fiscalStartYearSpinner.setBounds(370, 200, 50, 25);
+		personalPanel.add(fiscalStartYearSpinner);
+		
+		/*
+		//Test calendar spinner.
+		Calendar cal = Calendar.getInstance();
+		Date initDate = cal.getTime();
+		cal.add(Calendar.YEAR, -100);
+		Date firstDate = cal.getTime();
+		cal.add(Calendar.YEAR, 200);
+		Date lastDate = cal.getTime();
+		fiscalStartDateModel = new SpinnerDateModel(initDate,firstDate,lastDate,Calendar.DAY_OF_MONTH);
+		fiscalStartDateSpinner = new JSpinner( fiscalStartDateModel );
+		fiscalStartDateSpinner.setEditor( new JSpinner.DateEditor(fiscalStartDateSpinner, "MM/dd/yyyy")  );
+		fiscalStartDateSpinner.setBounds(220, 170, 90, 25);
+		personalPanel.add(fiscalStartDateSpinner);
+		*/
 	}
 	
 	private void createTimeEarnedPanel()
@@ -418,6 +451,19 @@ public class TimesheetGUI extends JFrame implements ActionListener {
 		addTimeEarnedYearSpinner.setEditor( new JSpinner.NumberEditor(addTimeEarnedYearSpinner, "####")  );
 		addTimeEarnedYearSpinner.setBounds(180, 475, 60, 25);
 		timeEarnedPanel.add(addTimeEarnedYearSpinner);
+		/*
+		Calendar cal = Calendar.getInstance();
+		Date initDate = cal.getTime();
+		cal.add(Calendar.YEAR, -100);
+		Date firstDate = cal.getTime();
+		cal.add(Calendar.YEAR, 200);
+		Date lastDate = cal.getTime();
+		addTimeEarnedDateModel = new SpinnerDateModel(initDate,firstDate,lastDate,Calendar.DAY_OF_MONTH);
+		addTimeEarnedDateSpinner = new JSpinner( addTimeEarnedDateModel );
+		addTimeEarnedDateSpinner.setEditor( new JSpinner.DateEditor(addTimeEarnedDateSpinner, "MM/dd/yyyy")  );
+		addTimeEarnedDateSpinner.setBounds(20, 450, 90, 25);
+		timeEarnedPanel.add(addTimeEarnedDateSpinner);
+		*/
 		addTimeEarnedHoursSpinner = new JSpinner( new SpinnerNumberModel(0,0,24,1) );
 		addTimeEarnedHoursSpinner.setBounds(250, 475, 40, 25);
 		timeEarnedPanel.add(addTimeEarnedHoursSpinner);
@@ -501,6 +547,20 @@ public class TimesheetGUI extends JFrame implements ActionListener {
 		addTimeTakenYearSpinner.setEditor( new JSpinner.NumberEditor(addTimeTakenYearSpinner, "####")  );
 		addTimeTakenYearSpinner.setBounds(180, 475, 60, 25);
 		timeTakenPanel.add(addTimeTakenYearSpinner);
+		/*
+		//Test calendar spinner.
+		Calendar cal = Calendar.getInstance();
+		Date initDate = cal.getTime();
+		cal.add(Calendar.YEAR, -100);
+		Date firstDate = cal.getTime();
+		cal.add(Calendar.YEAR, 200);
+		Date lastDate = cal.getTime();
+		addTimeTakenDateModel = new SpinnerDateModel(initDate,firstDate,lastDate,Calendar.DAY_OF_MONTH);
+		addTimeTakenDateSpinner = new JSpinner( addTimeTakenDateModel );
+		addTimeTakenDateSpinner.setEditor( new JSpinner.DateEditor(addTimeTakenDateSpinner, "MM/dd/yyyy")  );
+		addTimeTakenDateSpinner.setBounds(220, 300, 90, 25);
+		timeTakenPanel.add(addTimeTakenDateSpinner);
+		*/
 		addTimeTakenHoursSpinner = new JSpinner( new SpinnerNumberModel(0,0,24,1) );
 		addTimeTakenHoursSpinner.setBounds(250, 475, 40, 25);
 		timeTakenPanel.add(addTimeTakenHoursSpinner);
@@ -585,6 +645,19 @@ public class TimesheetGUI extends JFrame implements ActionListener {
 		timesheetStartYearSpinner.setEditor( new JSpinner.NumberEditor(timesheetStartYearSpinner, "####")  );
 		timesheetStartYearSpinner.setBounds(180, 475, 60, 25);
 		timesheetPanel.add(timesheetStartYearSpinner);
+		/*
+		Calendar cal = Calendar.getInstance();
+		Date initDate = cal.getTime();
+		cal.add(Calendar.YEAR, -100);
+		Date firstDate = cal.getTime();
+		cal.add(Calendar.YEAR, 200);
+		Date lastDate = cal.getTime();
+		timesheetStartDateModel = new SpinnerDateModel(initDate,firstDate,lastDate,Calendar.DAY_OF_MONTH);
+		timesheetStartDateSpinner = new JSpinner( timesheetStartDateModel );
+		timesheetStartDateSpinner.setEditor( new JSpinner.DateEditor(timesheetStartDateSpinner, "MM/dd/yyyy")  );
+		timesheetStartDateSpinner.setBounds(20, 450, 90, 25);
+		timesheetPanel.add( timesheetStartDateSpinner );
+		*/
 		
 		//Initialize the End Time elements.
 		timesheetEndLabel = new JLabel( "End Date:" );
@@ -609,6 +682,13 @@ public class TimesheetGUI extends JFrame implements ActionListener {
 		timesheetEndYearSpinner.setEditor( new JSpinner.NumberEditor(timesheetEndYearSpinner, "####")  );
 		timesheetEndYearSpinner.setBounds(420, 475, 60, 25);
 		timesheetPanel.add(timesheetEndYearSpinner);
+		/*
+		timesheetEndDateModel = new SpinnerDateModel(initDate,firstDate,lastDate,Calendar.DAY_OF_MONTH);
+		timesheetEndDateSpinner = new JSpinner( timesheetEndDateModel );
+		timesheetEndDateSpinner.setEditor( new JSpinner.DateEditor(timesheetEndDateSpinner, "MM/dd/yyyy")  );
+		timesheetEndDateSpinner.setBounds(260, 450, 90, 25);
+		timesheetPanel.add( timesheetEndDateSpinner );
+		*/
 		
 		//Initialize the create timesheet button
 		createTimesheetButton = new JButton("Create Timesheet");//Create the button to add time taken.
@@ -620,8 +700,8 @@ public class TimesheetGUI extends JFrame implements ActionListener {
 			{//Add the time earned
 				try
 				{//Set the fiscal starting month.
-					//timeTakenDataModel.addRow(new Object[]{ getNumMonth((String)addTimeTakenMonthSpinner.getValue()) + "/" + ((Integer)addTimeTakenDaySpinner.getValue()).toString() + "/" + ((Integer)addTimeTakenYearSpinner.getValue()).toString(), ((Integer)addTimeTakenHoursSpinner.getValue()).toString(), (String)addTimeTakenTimeTypeSpinner.getValue(), addTimeTakenCommentTextField.getText()});
-					getTimesheet( getNumMonth((String)timesheetStartMonthSpinner.getValue()), ((Integer)timesheetStartDaySpinner.getValue()).intValue(), ((Integer)timesheetStartYearSpinner.getValue()).intValue(), getNumMonth((String)timesheetEndMonthSpinner.getValue()), ((Integer)timesheetEndDaySpinner.getValue()).intValue(), ((Integer)timesheetEndYearSpinner.getValue()).intValue());
+					timeTakenDataModel.addRow(new Object[]{ getNumMonth((String)addTimeTakenMonthSpinner.getValue()) + "/" + ((Integer)addTimeTakenDaySpinner.getValue()).toString() + "/" + ((Integer)addTimeTakenYearSpinner.getValue()).toString(), ((Integer)addTimeTakenHoursSpinner.getValue()).toString(), (String)addTimeTakenTimeTypeSpinner.getValue(), addTimeTakenCommentTextField.getText()});
+					//getTimesheet( getNumMonth((String)timesheetStartMonthSpinner.getValue()), ((Integer)timesheetStartDaySpinner.getValue()).intValue(), ((Integer)timesheetStartYearSpinner.getValue()).intValue(), getNumMonth((String)timesheetEndMonthSpinner.getValue()), ((Integer)timesheetEndDaySpinner.getValue()).intValue(), ((Integer)timesheetEndYearSpinner.getValue()).intValue());
 				}
 				catch( Exception e )
 				{
@@ -677,8 +757,17 @@ public class TimesheetGUI extends JFrame implements ActionListener {
 		}
 		
 		//Get the fiscal starting date.
+		
 		fiscalStartMonthSpinner.setValue( months[ts.getFiscalStartingMonth()-1] );
 		fiscalStartDaySpinner.setValue( new Integer(ts.getFiscalStartingDay()) );
+		fiscalStartYearSpinner.setValue( new Integer(ts.getFiscalStartingYear()) );
+		/*
+		Calendar cal = Calendar.getInstance();
+		cal.set( Calendar.MONTH, ts.getFiscalStartingMonth()-1 );
+		cal.set( Calendar.DAY_OF_MONTH, ts.getFiscalStartingDay() );
+		cal.set( Calendar.YEAR, ts.getFiscalStartingYear() );
+		fiscalStartDateModel.setValue( cal );
+		*/
 		
 		//Get the different types of time given.
 		vacationInitialHoursSpinner.setValue( new Integer(ts.getTimeGiven( "Vacation" )) );
@@ -786,12 +875,14 @@ public class TimesheetGUI extends JFrame implements ActionListener {
 		try
 		{//Set the fiscal starting month.
 			ts.setFiscalStartingMonth( getNumMonth((String)fiscalStartMonthSpinner.getValue()) );
+			//ts.setFiscalStartingMonth( fiscalStartDateModel.get );
 		}
 		catch( Exception e )
 		{
 			System.err.println( "In SaveDB while saving the fiscal starting month: " + e.getMessage() );
 		}
 		ts.setFiscalStartingDay( ((Integer)fiscalStartDaySpinner.getValue()).intValue() );//Save the starting fiscal day.
+		ts.setFiscalStartingYear( ((Integer)fiscalStartYearSpinner.getValue()).intValue() );//Save the starting fiscal day.
 		
 		//Save the database to dbFilename.
 		ts.saveDB( dbFilename );

@@ -78,7 +78,7 @@ public class TimesheetDB {
 			*/
 			
 			sqlSt.executeUpdate( "CREATE TABLE IF NOT EXISTS Timesheet (Version TEXT PRIMARY KEY, UNIQUE(Version) ON CONFLICT REPLACE);" );
-			sqlSt.executeUpdate( "CREATE TABLE IF NOT EXISTS Person (ID TEXT NOT NULL, Name TEXT NOT NULL, Shift INTEGER, FiscalStartingMonth INTEGER, FiscalStartingDay INTEGER, PRIMARY KEY(ID), UNIQUE(ID) ON CONFLICT REPLACE);" );
+			sqlSt.executeUpdate( "CREATE TABLE IF NOT EXISTS Person (ID TEXT NOT NULL, Name TEXT NOT NULL, Shift INTEGER, FiscalStartingMonth INTEGER, FiscalStartingDay INTEGER, FiscalStartingYear INTEGER, PRIMARY KEY(ID), UNIQUE(ID) ON CONFLICT REPLACE);" );
 			sqlSt.executeUpdate( "CREATE TABLE IF NOT EXISTS TimeTypes (Type TEXT PRIMARY KEY, UNIQUE(Type) ON CONFLICT REPLACE);" );
 			sqlSt.executeUpdate( "CREATE TABLE IF NOT EXISTS TimeGiven (TimeType TEXT NOT NULL, numHours INTEGER, PRIMARY KEY(TimeType), UNIQUE(TimeType) ON CONFLICT REPLACE);" );
 			sqlSt.executeUpdate( "CREATE TABLE IF NOT EXISTS TimeTaken (TimeType TEXT NOT NULL, Date INTEGER NOT NULL, NumHours INTEGER NOT NULL, Comment TEXT, PRIMARY KEY(TimeType, Date), UNIQUE(TimeType, Date) ON CONFLICT REPLACE);" );
@@ -189,7 +189,7 @@ public class TimesheetDB {
 		return timeTypes;
 	}
 	
-	public void setPersonalInfo( String newID, String newName, int newShift, int fiscalStartingMonth, int fiscalStartingDay )
+	public void setPersonalInfo( String newID, String newName, int newShift, int fiscalStartingMonth, int fiscalStartingDay, int fiscalStartingYear )
 	{//Saves the personal info to the database.
 		Connection db = null;
 		Statement sqlSt = null;
@@ -201,7 +201,7 @@ public class TimesheetDB {
 			sqlSt = db.createStatement();
 			sqlSt.setQueryTimeout(30);//Set timeout to 30 seconds.
 			sqlSt.executeUpdate( "DELETE FROM Person;" );//Delete all the existing records.
-			sqlSt.executeUpdate( "INSERT OR IGNORE INTO Person (ID, Name, Shift, FiscalStartingMonth, FiscalStartingDay) VALUES( '" + newID + "','" + newName + "'," + newShift + "," + fiscalStartingMonth + "," + fiscalStartingDay + ");" );
+			sqlSt.executeUpdate( "INSERT OR IGNORE INTO Person (ID, Name, Shift, FiscalStartingMonth, FiscalStartingDay, FiscalStartingYear) VALUES( '" + newID + "','" + newName + "'," + newShift + "," + fiscalStartingMonth + "," + fiscalStartingDay + "," + fiscalStartingYear + ");" );
 		}
 		catch( Exception e )
 		{
